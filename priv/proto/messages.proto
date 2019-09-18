@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message GameResultResponse {
+  optional string league = 1;
+  optional string season = 2; 
+  optional string date = 3; 
+  optional string homeTeam = 4; 
+  optional string awayTeam = 5;
+  optional string fthg = 6; 
+  optional string ftag = 7; 
+  optional string ftr = 8; 
+  optional string hthg = 9; 
+  optional string htag = 10; 
+  optional string htr = 11;
+}
+
+message GameResultsResponse {
+  repeated GameResultResponse gameResults = 1;
+}
