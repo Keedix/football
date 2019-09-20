@@ -3,45 +3,50 @@ defmodule Football.Utils.Helpers do
 
   alias Football.Protobuf.Messages
 
-  @type etsGameResult :: {index :: String.t(), gameResultList :: [String.t()]}
+  @type ets_game_result ::
+          {{league :: String.t(), season :: String.t()}, gameResultList :: [String.t()]}
   @type game_result() :: %{
-          String.t() => %{
-            String.t() => String.t()
-          }
+          league: String.t(),
+          season: String.t(),
+          date: String.t(),
+          home_team: String.t(),
+          away_team: String.t(),
+          fthg: String.t(),
+          ftag: String.t(),
+          ftr: String.t(),
+          hthg: String.t(),
+          htag: String.t(),
+          htr: String.t()
         }
 
-  @spec decode_ets_game_result_to_map(etsGameResult :: {String.t(), [String.t()]}) ::
-          game_result()
+  @spec decode_ets_game_result_to_map(ets_game_result()) :: game_result()
   def decode_ets_game_result_to_map(etsGameResult) do
-    [league, season, date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr] =
+    {{league, season}, [date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr]} =
       etsGameResult
-      |> decode_game_result
 
     decoded_season =
       season
       |> decode_season!()
 
     %{
-      "#{league} #{decoded_season}" => %{
-        "date" => date,
-        "home_team" => homeTeam,
-        "away_team" => awayTeam,
-        "fthg" => fthg,
-        "ftag" => ftag,
-        "ftr" => ftr,
-        "hthg" => hthg,
-        "htag" => htag,
-        "htr" => htr
-      }
+      league: league,
+      season: decoded_season,
+      date: date,
+      home_team: homeTeam,
+      away_team: awayTeam,
+      fthg: fthg,
+      ftag: ftag,
+      ftr: ftr,
+      hthg: hthg,
+      htag: htag,
+      htr: htr
     }
   end
 
-  @spec decode_ets_game_result_to_protobuf(etsGameResult :: {String.t(), [String.t()]}) ::
-          %Messages.GameResultResponse{}
+  @spec decode_ets_game_result_to_protobuf(ets_game_result()) :: %Messages.GameResultResponse{}
   def decode_ets_game_result_to_protobuf(etsGameResult) do
-    [league, season, date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr] =
+    {{league, season}, [date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr]} =
       etsGameResult
-      |> decode_game_result()
 
     Messages.GameResultResponse.new(
       league: league,
@@ -85,15 +90,5 @@ defmodule Football.Utils.Helpers do
           }"
         )
     end
-  end
-
-  # -----------------------------------------------------
-  # ----------------- PRIVATE FUNCTIONS -----------------
-  # -----------------------------------------------------
-
-  @spec decode_game_result(etsGameResult()) :: [String.t()]
-  defp decode_game_result(etsGameResult) do
-    {_index, result} = etsGameResult
-    result
   end
 end

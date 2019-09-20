@@ -15,7 +15,7 @@ defmodule Football.Utils.Ets do
   @spec create_football_table() :: table_name()
   def create_football_table() do
     Logger.info("Creating ETS table: #{@tableName}")
-    @tableName = :ets.new(@tableName, [:set, :named_table])
+    @tableName = :ets.new(@tableName, [:bag, :named_table])
   end
 
   @doc """
@@ -28,14 +28,18 @@ defmodule Football.Utils.Ets do
 
   The fields keys are in order from left:
   ```
-    Index,Div,Season,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HTHG,HTAG,HTR
+    Index,League,Season,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HTHG,HTAG,HTR
   ```
   """
   @spec insert_game_result(game_result()) :: true
-  def insert_game_result([index | rest_of_row]) do
-    data = {index, rest_of_row}
-    # Logger.debug(fn -> "Inserting game result: #{inspect(data)}" end)
-    true = :ets.insert(@tableName, data)
+  def insert_game_result(game_result) do
+    [_index, league, season | tail] = game_result
+
+    leagueUpperCase =
+      league
+      |> String.upcase()
+
+    true = :ets.insert(@tableName, {{leagueUpperCase, season}, tail})
   end
 
   @spec get_all_seasons_results(contentType :: String.t()) :: [
@@ -59,5 +63,9 @@ defmodule Football.Utils.Ets do
     @tableName
     |> :ets.select(matchSpec)
     |> Enum.map(fun)
+  end
+
+  def get_league_season_result(league, season) do
+    :ets.lookup(@tableName, {league, season})
   end
 end

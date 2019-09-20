@@ -16,4 +16,6 @@ message GameResultResponse {
 
 message GameResultsResponse {
   repeated GameResultResponse gameResults = 1;
+  optional int32 statusCode = 2;
+  optional string message = 3;
 }
