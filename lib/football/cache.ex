@@ -6,25 +6,25 @@ defmodule Football.Cache do
 
   @type state :: %{ets: atom()}
 
-  @spec start_link(filePath :: String.t()) :: {:ok, pid()}
-  def start_link(filePath) do
-    GenServer.start_link(__MODULE__, filePath, name: __MODULE__)
+  @spec start_link(fileName :: String.t()) :: {:ok, pid()}
+  def start_link(fileName) do
+    GenServer.start_link(__MODULE__, fileName, name: __MODULE__)
   end
 
   @impl GenServer
-  @spec init(filePath :: String.t()) :: {:ok, state()}
-  def init(filePath) do
+  @spec init(fileName :: String.t()) :: {:ok, state()}
+  def init(fileName) do
     table = Ets.create_football_table()
 
-    :ok = load_csv_into_cache(filePath)
+    :ok = load_csv_into_cache(fileName)
 
     {:ok, %{ets: table}}
   end
 
-  @spec load_csv_into_cache(filePath :: String.t()) :: :ok
-  defp load_csv_into_cache(filePath) do
+  @spec load_csv_into_cache(fileName :: String.t()) :: :ok
+  defp load_csv_into_cache(fileName) do
     :ok =
-      filePath
+      "#{:code.priv_dir(:football)}/#{fileName}"
       |> File.stream!()
       |> CSV.decode()
       # First row describes columns names. It can be ommitted

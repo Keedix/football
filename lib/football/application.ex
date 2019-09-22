@@ -2,7 +2,7 @@ defmodule Football.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-  @csvFilePath Application.get_env(:football, :csv_file_path)
+  @csvFileName Application.get_env(:football, :csv_file)
 
   use Application
 
@@ -11,7 +11,7 @@ defmodule Football.Application do
     children = [
       # Start the endpoint when the application starts
       FootballWeb.Endpoint,
-      %{id: Football.Cache, start: {Football.Cache, :start_link, [@csvFilePath]}}
+      %{id: Football.Cache, start: {Football.Cache, :start_link, [@csvFileName]}}
       # Starts a worker by calling: Football.Worker.start_link(arg)
       # {Football.Worker, arg},
     ]
