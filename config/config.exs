@@ -16,7 +16,7 @@ config :football, FootballWeb.Endpoint,
 
 # Custom application configuration
 config :football,
-  csv_file_path: "priv/football_seasons_data.csv"
+  csv_file: "football_seasons_data.csv"
 
 # Configures Elixir's Logger
 config :logger, :console,
