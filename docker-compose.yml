@@ -1,9 +1,20 @@
 version: '3'
 services:
+  haproxy:
+    image: eeacms/haproxy
+    depends_on:
+      - web
+    ports:
+      - "80:5000" #HAproxy:latest always runs on 5000 port inside container
+      - "1936:1936"
+    environment:
+      BACKENDS: "web"
+      BACKENDS_PORT: 4000
+      DNS_ENABLED: "true"
   web:
     build: .
-    ports:
-      - "4001:4001"
+    # ports:
+    #   - "4000" #If no port provided automapping is done
     environment:
-      PORT: '4001'
+      PORT: '4000'
       HOST: 'localhost'
