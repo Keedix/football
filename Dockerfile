@@ -15,6 +15,7 @@ FROM elixir:1.9-alpine as releaser
     RUN mix local.rebar --force
     # Get all dependencies
     RUN mix deps.get
+    # Create release for next stage
     RUN mix release
 
 FROM alpine:latest
@@ -25,14 +26,17 @@ FROM alpine:latest
     RUN mkdir /target
     WORKDIR /target
     
+    # Get ready release from releaser stage
     COPY --from=releaser /opt/app/_build/prod/rel/football/ ./football
 
     # https://stackoverflow.com/a/49955098
-    # Create a group and user
+    # Create a group and user to run application no as sudo
     RUN addgroup -S appgroup && adduser -S appuser -G appgroup
     
     RUN chown -R appuser: ./football
     # Tell docker that all future commands should run as the appuser user
     USER appuser
 
+    # Run start command from release. Other possible commands:
+    # https://elixir-lang.org/blog/2019/06/24/elixir-v1-9-0-released/ 
     CMD ["./football/bin/football", "start"]
