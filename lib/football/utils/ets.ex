@@ -2,9 +2,9 @@ defmodule Football.Utils.Ets do
   require Ex2ms
   require Logger
 
-  alias Football.{Utils, Types}
+  alias Football.Types
 
-  @tableName :football_seasons
+  @tableName Application.get_env(:football, :ets_table_name)
 
   @doc """
   Creates ETS named table to store data from CSV file.
@@ -82,8 +82,9 @@ defmodule Football.Utils.Ets do
   @spec get_league_season_result(String.t(), String.t()) :: [Types.ets_game_result()]
   def get_league_season_result(league, season) do
     upperCaseLeague = String.upcase(league)
+    etsEncodedSeason = Football.Utils.encode_season!(season)
 
-    result = :ets.lookup(@tableName, {upperCaseLeague, season})
+    result = :ets.lookup(@tableName, {upperCaseLeague, etsEncodedSeason})
 
     Logger.debug(fn ->
       "ETS: Result of getting league: #{league}, season: #{season}, #{inspect(result)}"

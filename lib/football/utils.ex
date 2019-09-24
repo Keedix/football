@@ -34,9 +34,13 @@ defmodule Football.Utils do
     {{league, season}, [date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr]} =
       etsGameResult
 
+    decoded_season =
+      season
+      |> decode_season!()
+
     Messages.GameResult.new(
       league: league,
-      season: season,
+      season: decoded_season,
       date: date,
       homeTeam: homeTeam,
       awayTeam: awayTeam,
@@ -51,15 +55,23 @@ defmodule Football.Utils do
 
   @spec decode_ets_league_season_to_map(Types.ets_key()) :: Types.league_season()
   def decode_ets_league_season_to_map({league, season}) do
+    decoded_season =
+      season
+      |> decode_season!()
+
     %{
       league: league,
-      season: season
+      season: decoded_season
     }
   end
 
   @spec decode_ets_league_season_to_protobuf(Types.ets_key()) :: %Messages.LeagueSeason{}
   def decode_ets_league_season_to_protobuf({league, season}) do
-    Messages.LeagueSeason.new(league: league, season: season)
+    decoded_season =
+      season
+      |> decode_season!()
+
+    Messages.LeagueSeason.new(league: league, season: decoded_season)
   end
 
   # Example input:
@@ -86,5 +98,12 @@ defmodule Football.Utils do
           }"
         )
     end
+  end
+
+  @spec encode_season!(decodedSeason :: String.t()) :: String.t()
+  def encode_season!(decodedSeason) do
+    [first, second] = String.split(decodedSeason, "-")
+    {_, s} = String.split_at(second, 2)
+    "#{first}#{s}"
   end
 end

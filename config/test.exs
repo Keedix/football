@@ -8,3 +8,7 @@ config :football, FootballWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :football,
+  csv_file: "football_seasons_data_test.csv",
+  ets_table_name: :football_seasons_test

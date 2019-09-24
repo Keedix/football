@@ -23,6 +23,6 @@ defmodule FootballWeb.Router do
     pipe_through :api
 
     get "/leagues", LeaguesController, :get_all_leagues
-    get "/leagues/:league/season/:season", LeaguesController, :get_league_season_results
+    get "/leagues/:league/seasons/:season", LeaguesController, :get_league_season_results
   end
 end
