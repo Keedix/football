@@ -42,7 +42,8 @@ defmodule Football.MixProject do
       # External
       {:csv, "~> 2.3"},
       {:ex2ms, "~> 1.5"},
-      {:exprotobuf, "~> 1.2"}
+      {:exprotobuf, "~> 1.2"},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
 end
