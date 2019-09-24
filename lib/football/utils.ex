@@ -1,25 +1,10 @@
-defmodule Football.Utils.Helpers do
+defmodule Football.Utils do
   require Logger
 
   alias Football.Protobuf.Messages
+  alias Football.Types
 
-  @type ets_game_result ::
-          {{league :: String.t(), season :: String.t()}, gameResultList :: [String.t()]}
-  @type game_result() :: %{
-          league: String.t(),
-          season: String.t(),
-          date: String.t(),
-          home_team: String.t(),
-          away_team: String.t(),
-          fthg: String.t(),
-          ftag: String.t(),
-          ftr: String.t(),
-          hthg: String.t(),
-          htag: String.t(),
-          htr: String.t()
-        }
-
-  @spec decode_ets_game_result_to_map(ets_game_result()) :: game_result()
+  @spec decode_ets_game_result_to_map(Types.ets_game_result()) :: Types.game_result()
   def decode_ets_game_result_to_map(etsGameResult) do
     {{league, season}, [date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr]} =
       etsGameResult
@@ -43,12 +28,13 @@ defmodule Football.Utils.Helpers do
     }
   end
 
-  @spec decode_ets_game_result_to_protobuf(ets_game_result()) :: %Messages.GameResultResponse{}
+  @spec decode_ets_game_result_to_protobuf(Types.ets_game_result()) ::
+          %Messages.GameResult{}
   def decode_ets_game_result_to_protobuf(etsGameResult) do
     {{league, season}, [date, homeTeam, awayTeam, fthg, ftag, ftr, hthg, htag, htr]} =
       etsGameResult
 
-    Messages.GameResultResponse.new(
+    Messages.GameResult.new(
       league: league,
       season: season,
       date: date,
@@ -63,19 +49,29 @@ defmodule Football.Utils.Helpers do
     )
   end
 
-  @doc """
-  Example input:
-  ```
-    "201617"
-  ```
-  Example output:
-  ```
-    "2016-2017"
-  ```
+  @spec decode_ets_league_season_to_map(Types.ets_key()) :: Types.league_season()
+  def decode_ets_league_season_to_map({league, season}) do
+    %{
+      league: league,
+      season: season
+    }
+  end
 
-  """
+  @spec decode_ets_league_season_to_protobuf(Types.ets_key()) :: %Messages.LeagueSeason{}
+  def decode_ets_league_season_to_protobuf({league, season}) do
+    Messages.LeagueSeason.new(league: league, season: season)
+  end
+
+  # Example input:
+  # ```
+  #   "201617"
+  # ```
+  # Example output:
+  # ```
+  #   "2016-2017"
+  # ```
   @spec decode_season!(String.t()) :: String.t()
-  def decode_season!(encodedSeason) do
+  defp decode_season!(encodedSeason) do
     case String.length(encodedSeason) do
       6 ->
         {firstYear, secondYear} = encodedSeason |> String.split_at(4)

@@ -1,31 +1,35 @@
 defmodule FootballWeb.LeaguesController do
   use FootballWeb, :controller
 
-  alias Football.{Utils.Ets, Utils.Helpers, Protobuf.Messages}
+  alias Football.{Utils.Ets, Protobuf.Messages}
   alias FootballWeb.Utils
 
   def get_all_leagues(conn, _params) do
     case get_req_header(conn, "accept") do
       [contentType] = ["application/vnd.google.protobuf"] ->
-        protobufGameResults =
-          contentType
-          |> Ets.get_all_seasons_results()
+        protobufLeaguesSeasons =
+          Ets.get_league_season_list()
+          |> Enum.map(&Football.Utils.decode_ets_league_season_to_protobuf/1)
 
         encodedProtobufBody =
-          Messages.GameResultsResponse.new(gameResults: protobufGameResults, statusCode: 200)
-          |> Messages.GameResultsResponse.encode()
+          Messages.LeaguesSeasons.new(leaguesSeasons: protobufLeaguesSeasons, statusCode: 200)
+          |> Messages.LeaguesSeasons.encode()
 
         conn
         |> put_resp_content_type(contentType)
         |> send_resp(200, encodedProtobufBody)
 
       _ ->
-        jsonGameResults =
-          "application/json"
-          |> Ets.get_all_seasons_results()
+        contentType = "application/json"
+
+        jsonLeaguesSeasons =
+          Ets.get_league_season_list()
+          |> Enum.map(&Football.Utils.decode_ets_league_season_to_map/1)
 
         conn
-        |> json(jsonGameResults)
+        |> put_resp_content_type(contentType)
+        |> put_status(200)
+        |> json(Utils.resp(%{leagues_seasons: jsonLeaguesSeasons}))
     end
   end
 
@@ -38,7 +42,7 @@ defmodule FootballWeb.LeaguesController do
           case etsGameResults do
             [] ->
               data =
-                Messages.GameResultsResponse.new(
+                Messages.GameResults.new(
                   statusCode: 404,
                   message: "League '#{league}' in season '#{season}' wasn't found"
                 )
@@ -47,10 +51,10 @@ defmodule FootballWeb.LeaguesController do
 
             gameResults ->
               protoGameResults =
-                gameResults |> Enum.map(&Helpers.decode_ets_game_result_to_protobuf/1)
+                gameResults |> Enum.map(&Football.Utils.decode_ets_game_result_to_protobuf/1)
 
               data =
-                Messages.GameResultsResponse.new(
+                Messages.GameResults.new(
                   statusCode: 200,
                   gameResults: protoGameResults
                 )
@@ -60,7 +64,7 @@ defmodule FootballWeb.LeaguesController do
 
         conn
         |> put_resp_content_type(contentType)
-        |> send_resp(statusCode, encodedProtobufBody |> Messages.GameResultsResponse.encode())
+        |> send_resp(statusCode, encodedProtobufBody |> Messages.GameResults.encode())
 
       _ ->
         {statusCode, data} =
@@ -72,7 +76,7 @@ defmodule FootballWeb.LeaguesController do
             gameResults ->
               decodedGameResults =
                 gameResults
-                |> Enum.map(&Helpers.decode_ets_game_result_to_map/1)
+                |> Enum.map(&Football.Utils.decode_ets_game_result_to_map/1)
 
               {200, Utils.resp(%{game_results: decodedGameResults})}
           end

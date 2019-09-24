@@ -19,7 +19,6 @@ defmodule FootballWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
   scope "/api/1.0", FootballWeb do
     pipe_through :api
 

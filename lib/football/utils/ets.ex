@@ -2,17 +2,14 @@ defmodule Football.Utils.Ets do
   require Ex2ms
   require Logger
 
-  alias Football.Utils.Helpers
+  alias Football.{Utils, Types}
 
   @tableName :football_seasons
-
-  @type table_name :: atom()
-  @type game_result :: [String.t()]
 
   @doc """
   Creates ETS named table to store data from CSV file.
   """
-  @spec create_football_table() :: table_name()
+  @spec create_football_table() :: Types.ets_table_name()
   def create_football_table() do
     Logger.info("Creating ETS table: #{@tableName}")
     @tableName = :ets.new(@tableName, [:bag, :named_table])
@@ -30,8 +27,23 @@ defmodule Football.Utils.Ets do
   ```
     Index,League,Season,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HTHG,HTAG,HTR
   ```
+
+  The explanations of keys:
+  ```
+    Div = League Division
+    Date = Match Date (dd/mm/yy)
+    Time = Time of match kick off
+    HomeTeam = Home Team
+    AwayTeam = Away Team
+    FTHG and HG = Full Time Home Team Goals
+    FTAG and AG = Full Time Away Team Goals
+    FTR and Res = Full Time Result (H=Home Win, D=Draw, A=Away Win)
+    HTHG = Half Time Home Team Goals
+    HTAG = Half Time Away Team Goals
+    HTR = Half Time Result (H=Home Win, D=Draw, A=Away Win)
+  ```
   """
-  @spec insert_game_result(game_result()) :: true
+  @spec insert_game_result(Types.cvs_game_result()) :: true
   def insert_game_result(game_result) do
     [_index, league, season | tail] = game_result
 
@@ -39,33 +51,44 @@ defmodule Football.Utils.Ets do
       league
       |> String.upcase()
 
-    true = :ets.insert(@tableName, {{leagueUpperCase, season}, tail})
+    data = {{leagueUpperCase, season}, tail}
+
+    Logger.debug(fn ->
+      "ETS: inserting data: #{inspect(data)}"
+    end)
+
+    true = :ets.insert(@tableName, data)
   end
 
-  @spec get_all_seasons_results(contentType :: String.t()) :: [
-          {index :: String.t(), game_result()}
-        ]
-  def get_all_seasons_results(contentType) do
+  @spec get_league_season_list() :: [Types.ets_key()]
+  def get_league_season_list() do
     matchSpec =
       Ex2ms.fun do
-        row -> row
+        {key, _rest} -> key
       end
 
-    fun =
-      case contentType do
-        "application/json" ->
-          &Helpers.decode_ets_game_result_to_map/1
+    result =
+      @tableName
+      |> :ets.select(matchSpec)
+      |> Enum.uniq()
 
-        "application/vnd.google.protobuf" ->
-          &Helpers.decode_ets_game_result_to_protobuf/1
-      end
+    Logger.debug(fn ->
+      "ETS: League season list: #{inspect(result)}"
+    end)
 
-    @tableName
-    |> :ets.select(matchSpec)
-    |> Enum.map(fun)
+    result
   end
 
+  @spec get_league_season_result(String.t(), String.t()) :: [Types.ets_game_result()]
   def get_league_season_result(league, season) do
-    :ets.lookup(@tableName, {league, season})
+    upperCaseLeague = String.upcase(league)
+
+    result = :ets.lookup(@tableName, {upperCaseLeague, season})
+
+    Logger.debug(fn ->
+      "ETS: Result of getting league: #{league}, season: #{season}, #{inspect(result)}"
+    end)
+
+    result
   end
 end
