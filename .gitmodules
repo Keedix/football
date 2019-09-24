@@ -1,0 +1,3 @@
+[submodule "priv/proto-definitions"]
+	path = priv/proto-definitions
+	url = https://github.com/Keedix/proto-definitions
