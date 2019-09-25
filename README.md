@@ -170,6 +170,7 @@ docker-compose up -d web
   - JSON
 
     Code: 200
+    
     Content:
 
     ```json
