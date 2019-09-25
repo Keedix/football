@@ -87,7 +87,7 @@ To list all commands:
 
 - Run tests
 
-````
+```
 
 mix test
 
@@ -105,7 +105,7 @@ mix dialyzer
 
 ```
 
-mix coveralls
+MIX_ENV=test mix coveralls
 
 ```
 
@@ -115,7 +115,7 @@ mix coveralls
 
 mix credo -a
 
-````
+```
 
 ## The processes tree
 
@@ -188,7 +188,7 @@ docker-compose up -d web
   - JSON
 
     Code: 200
-    
+
     Content:
 
     ```json
@@ -205,7 +205,7 @@ docker-compose up -d web
 
     Content: Binary
 
-    ```
+    ```proto
     message LeagueSeason {
       optional string league = 1;
       optional string season = 2;
@@ -242,7 +242,7 @@ docker-compose up -d web
     Content: Binary
 
 
-    ```
+    ```proto
     message LeagueSeason {
     optional string league = 1;
       optional string season = 2;
