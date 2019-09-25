@@ -347,22 +347,9 @@ curl -XGET http://localhost:4004/api/1.0/leagues -H "Accept: application/vnd.goo
     }
     ```
 
-    Code: 500
-
-    Content:
-
-    ```json
-    {
-      "error": {
-        "code": 500,
-        "message": "Internal Server Error"
-      }
-    }
-    ```
-
   - PROTOBUF
 
-    Code: 404, 500
+    Code: 404
 
     Content: Binary
 
