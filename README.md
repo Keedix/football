@@ -15,6 +15,7 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+- [The Processes Tree](#the-processes-tree)
 - [Docker deployment](#docker-deployment)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -115,6 +116,23 @@ mix coveralls
 mix credo -a
 
 ````
+
+## The processes tree
+
+The OTP processes structure is fairly easy. Besides Phoenix framework standard processes there is a
+`Football.Cache` process responsible for starting ETS and loading data to it.
+
+```
+
++ Football.Supervisor
+|
++--+ FootballWeb.Endpoint |  (Phoenix Framework processes structure)
+|                         |
+|                         |
+|                         +--+
+|                         +--+...
++--+ Football.Cache (gen_server)
+```
 
 ## Docker deployment
 
