@@ -27,9 +27,7 @@ To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-To run `Football` locally, one needs elixir and erlang to be installed. One of the easiest way is to use [asdf](https://asdf-vm.com/#/https://asdf-vm.com/#/) manager to install elixir and erlang. Preferable version of elixir:
-
-- 1.9
+To run `Football` locally, one needs elixir and erlang to be installed. One of the easiest way is to use [asdf](https://asdf-vm.com/#/https://asdf-vm.com/#/) manager to install elixir and erlang. Required version of elixir: `1.9.X`.
 
 ### Installation
 
@@ -59,6 +57,65 @@ mix deps.get
 iex -S mix phx.server
 ```
 
+To create release locally, shipped with erts and set as production env, run:
+
+```
+MIX_ENV=prod mix release
+```
+
+```
+Release created at _build/prod/rel/football!
+
+    # To start your system
+    _build/prod/rel/football/bin/football start
+
+Once the release is running:
+
+    # To connect to it remotely
+    _build/prod/rel/football/bin/football remote
+
+    # To stop it gracefully (you may also send SIGINT/SIGTERM)
+    _build/prod/rel/football/bin/football stop
+
+To list all commands:
+
+    _build/prod/rel/football/bin/football
+```
+
+### Other usful tasks
+
+- Run tests
+
+````
+
+mix test
+
+```
+
+- Run static types analysis (may take a while first time)
+
+```
+
+mix dialyzer
+
+```
+
+- Run tests coverage
+
+```
+
+mix coveralls
+
+```
+
+- Run credo, static analysis for code consistency
+
+```
+
+mix credo -a
+
+````
+
 ## Docker deployment
 
 This section describes how to build and run the `Football` project in docker environment.
@@ -66,6 +123,7 @@ This section describes how to build and run the `Football` project in docker env
 ### Prerequisites
 
 To build and run docker image one needs to have [docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [docker-compose](https://docs.docker.com/compose/) installed.
+Docker compose schema in version `3` must be supported. For additonal information there is a table of versions supporting schema `3` and higher https://docs.docker.com/compose/compose-file/.
 
 ### Installation
 

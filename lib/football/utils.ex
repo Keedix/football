@@ -56,6 +56,13 @@ defmodule Football.Utils do
     )
   end
 
+  @doc """
+  Transforms CSV value representation to map with 2 keys: `league`, `season`
+
+  ## Example
+    iex(1)> Football.Utils.decode_ets_league_season_to_map({"SP1", "201516"})
+    %{league: "SP1", season: "2015-2016"}
+  """
   @spec decode_ets_league_season_to_map(Types.ets_key()) :: Types.league_season()
   def decode_ets_league_season_to_map({league, season}) do
     decoded_season =
@@ -68,6 +75,13 @@ defmodule Football.Utils do
     }
   end
 
+  @doc """
+  Transforms CSV value representation to protobuf structure
+
+  ## Example
+    iex(2)> Football.Utils.decode_ets_league_season_to_protobuf({"SP1", "201516"})
+    %Football.Protobuf.Messages.LeagueSeason{league: "SP1", season: "2015-2016"}
+  """
   @spec decode_ets_league_season_to_protobuf(Types.ets_key()) :: %Messages.LeagueSeason{}
   def decode_ets_league_season_to_protobuf({league, season}) do
     decoded_season =
@@ -103,6 +117,15 @@ defmodule Football.Utils do
     end
   end
 
+  @doc """
+  Transform season to CSV's value format.
+
+  ## Examples
+
+    iex> Football.Utils.encode_season!("2015-2016")
+    "201516"
+
+  """
   @spec encode_season!(decoded_season :: String.t()) :: String.t()
   def encode_season!(decoded_season) do
     [first, second] = String.split(decoded_season, "-")

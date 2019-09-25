@@ -1,20 +1,32 @@
-version: '3'
+version: "3"
 services:
   haproxy:
     image: eeacms/haproxy
     depends_on:
       - web
     ports:
-      - "80:5000" #HAproxy:latest always runs on 5000 port inside container
+      - "4004:5000" #HAproxy:latest always runs on 5000 port inside container
       - "1936:1936"
     environment:
+      # Official HAproxy image. Documentation of envs can be
+      # found here:  https://hub.docker.com/r/eeacms/haproxy/
+      # Official HAproxy documentation of configuration:
+      #  http://www.haproxy.org/download/1.9/doc/configuration.txt
+      # ------------------
+      # BACKENDS, DNS_ENABLED, BACKENDS_PORT
+      # keys lets haproxy auto-discover balanced backends
       BACKENDS: "web"
       BACKENDS_PORT: 4000
       DNS_ENABLED: "true"
+      # ------------------
+      LOG_LEVEL: "info"
+      STATS_AUTH: "admin:admin"
+      BACKEND_NAME: "Football-web"
+      FRONTEND_NAME: "Football-haproxy"
+      # Default: http
+      FRONTEND_MODE: "http"
   web:
     build: .
-    # ports:
-    #   - "4000" #If no port provided automapping is done
     environment:
-      PORT: '4000'
-      HOST: 'localhost'
+      # Phoenix application exposed port
+      PORT: "4000"

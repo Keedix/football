@@ -1,5 +1,7 @@
 defmodule Football.UtilsTest do
   use ExUnit.Case, async: true
+  doctest Football.Utils
+
   @league "league"
   @season "201516"
   @date "19/08/2016"
