@@ -24,5 +24,7 @@ defmodule FootballWeb.Router do
 
     get "/leagues", LeaguesController, :get_all_leagues
     get "/leagues/:league/seasons/:season", LeaguesController, :get_league_season_results
+
+    match :*, "/*path", NotFoundController, :not_found
   end
 end
