@@ -3,8 +3,8 @@ defmodule Football.UtilsTest do
   @league "league"
   @season "201516"
   @date "19/08/2016"
-  @homeTeam "La Coruna"
-  @awayTeam "Eibar"
+  @home_team "La Coruna"
+  @away_team "Eibar"
   @fthg "2"
   @ftag "1"
   @ftr "H"
@@ -13,18 +13,18 @@ defmodule Football.UtilsTest do
   @htr "D"
   @decoded_season "2015-2016"
 
-  @etsGameResult {{@league, @season},
-                  [@date, @homeTeam, @awayTeam, @fthg, @ftag, @ftr, @hthg, @htag, @htr]}
+  @ets_game_result {{@league, @season},
+                    [@date, @home_team, @away_team, @fthg, @ftag, @ftr, @hthg, @htag, @htr]}
   test "should decode ets game result to map" do
-    result = Football.Utils.decode_ets_game_result_to_map(@etsGameResult)
+    result = Football.Utils.decode_ets_game_result_to_map(@ets_game_result)
 
     assert result ==
              %{
                league: @league,
                season: @decoded_season,
                date: @date,
-               home_team: @homeTeam,
-               away_team: @awayTeam,
+               home_team: @home_team,
+               away_team: @away_team,
                fthg: @fthg,
                ftag: @ftag,
                ftr: @ftr,
@@ -40,12 +40,12 @@ defmodule Football.UtilsTest do
   end
 
   test "should decode ets game result to protobuf" do
-    result = Football.Utils.decode_ets_game_result_to_protobuf(@etsGameResult)
+    result = Football.Utils.decode_ets_game_result_to_protobuf(@ets_game_result)
     assert result.league == @league
     assert result.season == @decoded_season
     assert result.date == @date
-    assert result.homeTeam == @homeTeam
-    assert result.awayTeam == @awayTeam
+    assert result.homeTeam == @home_team
+    assert result.awayTeam == @away_team
     assert result.fthg == @fthg
     assert result.ftag == @ftag
     assert result.ftr == @ftr

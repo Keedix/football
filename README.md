@@ -12,12 +12,13 @@
 
 ## Table of Contents
 
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Docker deployment](#docker-deployment)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Docker deployment](#docker-deployment)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Api documentation](#api-documentation)
 
 ## Getting Started
 
@@ -28,7 +29,7 @@ To get a local copy up and running follow these simple example steps.
 
 To run `Football` locally, one needs elixir and erlang to be installed. One of the easiest way is to use [asdf](https://asdf-vm.com/#/https://asdf-vm.com/#/) manager to install elixir and erlang. Preferable version of elixir:
 
-* 1.9
+- 1.9
 
 ### Installation
 
@@ -83,3 +84,248 @@ The `docker-compose.yml` contains configuration describing the port on which the
 ```sh
 docker-compose up -d web
 ```
+
+## Api documentation
+
+### Leagues
+
+- **PATH**
+
+  `/api/1.0/leagues`
+
+- **METHOD**
+
+  `GET`
+
+- **HEADERS**
+
+  `Accept: application/json`
+
+  or
+
+  `Accept: application/vnd.google.protobuf`
+
+  If no `Accept` header provided, `application/json` content-type will be provided.
+
+- **Success Response**
+
+  - JSON
+
+    Code: 200
+    Content:
+
+    ```json
+    {
+      "data": {
+        "leagues_seasons": [{ "league": "SP1", "season": "2015-2016" }]
+      }
+    }
+    ```
+
+  - PROTOBUF
+
+    Code: 200
+
+    Content: Binary
+
+    ```
+    message LeagueSeason {
+      optional string league = 1;
+      optional string season = 2;
+    }
+
+    message LeaguesSeasons {
+      repeated LeagueSeason leaguesSeasons = 1;
+      optional int32 statusCode = 2;
+      optional string message = 3;
+    }
+    ```
+
+- **Error Response**
+
+  - JSON
+
+    Code: 500
+
+    Content:
+
+    ```json
+    {
+      "error": {
+        "code": 500,
+        "message": "Internal Server Error"
+      }
+    }
+    ```
+
+  - PROTOBUF
+
+    Code: 500
+
+    Content: Binary
+
+
+    ```
+    message LeagueSeason {
+    optional string league = 1;
+      optional string season = 2;
+    }
+
+    message LeaguesSeasons {
+      repeated LeagueSeason leaguesSeasons = 1;
+      optional int32 statusCode = 2;
+      optional string message = 3;
+    }
+    ```
+
+- **Example**
+
+For JSON body response:
+
+```sh
+
+curl -XGET http://localhost:4004/api/1.0/leagues -H "Accept: application/json"
+```
+
+For protobuf encoded body response:
+
+```sh
+curl -XGET http://localhost:4004/api/1.0/leagues -H "Accept: application/vnd.google.protobuf"
+```
+
+---
+
+- **PATH**
+
+  `/api/1.0/leagues/:league/seasons/:season`
+
+- **METHOD**
+
+  `GET`
+
+* **HEADERS**
+
+  `Accept: application/json`
+
+  or
+
+  `Accept: application/vnd.google.protobuf`
+
+  If no `Accept` header provided, `application/json` content-type will be provided.
+
+* **Success Response**
+
+  - JSON
+
+    Code: 200
+
+    Content:
+
+    ```json
+    {
+      "data": {
+        "game_results": [
+          {
+            "away_team": "Levante",
+            "date": "15/05/2016",
+            "ftag": "1",
+            "fthg": "3",
+            "ftr": "H",
+            "home_team": "Vallecano",
+            "htag": "0",
+            "hthg": "2",
+            "htr": "H",
+            "league": "SP1",
+            "season": "2015-2016"
+          }
+        ]
+      }
+    }
+    ```
+
+  - PROTOBUF
+
+    Code: 200
+
+    Content: Binary
+
+    ```
+    message GameResult {
+      optional string league = 1;
+      optional string season = 2;
+      optional string date = 3;
+      optional string homeTeam = 4;
+      optional string awayTeam = 5;
+      optional string fthg = 6;
+      optional string ftag = 7;
+      optional string ftr = 8;
+      optional string hthg = 9;
+      optional string htag = 10;
+      optional string htr = 11;
+    }
+
+    message GameResults {
+      repeated GameResult gameResults = 1;
+      optional int32 statusCode = 2;
+      optional string message = 3;
+    }
+    ```
+
+- **Error Response**
+
+  - JSON
+
+    Code: 404
+
+    Content:
+
+    ```json
+    {
+      "error": {
+        "code": 404,
+        "message": "League 'PS1' in season '2017-2018' wasn't found"
+      }
+    }
+    ```
+
+    Code: 500
+
+    Content:
+
+    ```json
+    {
+      "error": {
+        "code": 500,
+        "message": "Internal Server Error"
+      }
+    }
+    ```
+
+  - PROTOBUF
+
+    Code: 404, 500
+
+    Content: Binary
+
+
+    ```
+    message GameResult {
+      optional string league = 1;
+      optional string season = 2;
+      optional string date = 3;
+      optional string homeTeam = 4;
+      optional string awayTeam = 5;
+      optional string fthg = 6;
+      optional string ftag = 7;
+      optional string ftr = 8;
+      optional string hthg = 9;
+      optional string htag = 10;
+      optional string htr = 11;
+    }
+
+    message GameResults {
+      repeated GameResult gameResults = 1;
+      optional int32 statusCode = 2;
+      optional string message = 3;
+    }
+    ```

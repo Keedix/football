@@ -1,4 +1,7 @@
 defmodule Football.Types do
+  @moduledoc """
+  Module exports custom data types
+  """
   @typedoc """
   Represents data loaded from CSV. Every row is represented as a list of strings.
 

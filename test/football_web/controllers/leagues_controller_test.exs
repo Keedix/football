@@ -1,7 +1,7 @@
 defmodule FootballWeb.LeaguesControllerTest do
   use FootballWeb.ConnCase
   @league "SP1"
-  @decodedSeason "2016-2017"
+  @decoded_season "2016-2017"
 
   test "GET /api/1.0/leagues application/json", %{conn: conn} do
     conn = get(conn, "/api/1.0/leagues")
@@ -20,12 +20,12 @@ defmodule FootballWeb.LeaguesControllerTest do
       |> put_req_header("accept", "application/vnd.google.protobuf")
       |> get("/api/1.0/leagues")
 
-    leagueSeason =
-      Football.Protobuf.Messages.LeagueSeason.new(league: @league, season: @decodedSeason)
+    league_season =
+      Football.Protobuf.Messages.LeagueSeason.new(league: @league, season: @decoded_season)
 
     expected =
       Football.Protobuf.Messages.LeaguesSeasons.new(
-        leaguesSeasons: [leagueSeason],
+        leaguesSeasons: [league_season],
         statusCode: 200
       )
       |> Football.Protobuf.Messages.LeaguesSeasons.encode()

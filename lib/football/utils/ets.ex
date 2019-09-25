@@ -1,18 +1,21 @@
 defmodule Football.Utils.Ets do
+  @moduledoc """
+  Module provides wrappers around common requests to ETS
+  """
   require Ex2ms
   require Logger
 
   alias Football.Types
 
-  @tableName Application.get_env(:football, :ets_table_name)
+  @table_name Application.get_env(:football, :ets_table_name)
 
   @doc """
   Creates ETS named table to store data from CSV file.
   """
   @spec create_football_table() :: Types.ets_table_name()
   def create_football_table() do
-    Logger.info("Creating ETS table: #{@tableName}")
-    @tableName = :ets.new(@tableName, [:bag, :named_table])
+    Logger.info("Creating ETS table: #{@table_name}")
+    @table_name = :ets.new(@table_name, [:bag, :named_table])
   end
 
   @doc """
@@ -47,29 +50,29 @@ defmodule Football.Utils.Ets do
   def insert_game_result(game_result) do
     [_index, league, season | tail] = game_result
 
-    leagueUpperCase =
+    upcase_league =
       league
       |> String.upcase()
 
-    data = {{leagueUpperCase, season}, tail}
+    data = {{upcase_league, season}, tail}
 
     Logger.debug(fn ->
       "ETS: inserting data: #{inspect(data)}"
     end)
 
-    true = :ets.insert(@tableName, data)
+    true = :ets.insert(@table_name, data)
   end
 
   @spec get_league_season_list() :: [Types.ets_key()]
   def get_league_season_list() do
-    matchSpec =
+    match_spec =
       Ex2ms.fun do
         {key, _rest} -> key
       end
 
     result =
-      @tableName
-      |> :ets.select(matchSpec)
+      @table_name
+      |> :ets.select(match_spec)
       |> Enum.uniq()
 
     Logger.debug(fn ->
@@ -81,10 +84,10 @@ defmodule Football.Utils.Ets do
 
   @spec get_league_season_result(String.t(), String.t()) :: [Types.ets_game_result()]
   def get_league_season_result(league, season) do
-    upperCaseLeague = String.upcase(league)
-    etsEncodedSeason = Football.Utils.encode_season!(season)
+    upcase_league = String.upcase(league)
+    ets_encoded_season = Football.Utils.encode_season!(season)
 
-    result = :ets.lookup(@tableName, {upperCaseLeague, etsEncodedSeason})
+    result = :ets.lookup(@table_name, {upcase_league, ets_encoded_season})
 
     Logger.debug(fn ->
       "ETS: Result of getting league: #{league}, season: #{season}, #{inspect(result)}"

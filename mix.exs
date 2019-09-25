@@ -45,7 +45,8 @@ defmodule Football.MixProject do
       {:ex2ms, "~> 1.5"},
       {:exprotobuf, "~> 1.2"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end

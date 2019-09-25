@@ -1,4 +1,7 @@
 defmodule Football.Cache do
+  @moduledoc """
+  Module starts ETS and loads CSV football results data
+  """
   use GenServer
   require Logger
 
@@ -14,6 +17,7 @@ defmodule Football.Cache do
   @impl GenServer
   @spec init(fileName :: String.t()) :: {:ok, state()}
   def init(fileName) do
+    Logger.info("Initializing #{__MODULE__} with args: #{fileName}")
     table = Ets.create_football_table()
 
     :ok = load_csv_into_cache(fileName)
